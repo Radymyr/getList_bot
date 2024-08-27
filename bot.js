@@ -6,7 +6,7 @@ const bot = new Telegraf(process.env.TOKEN);
 
 let userMessages = {};
 let userMessageIds = {};
-let chatStatus = false;
+let chatStatus = {};
 const LIST_LENGTH = 10;
 
 bot.command('on', async (ctx) => {
