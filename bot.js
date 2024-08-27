@@ -6,23 +6,35 @@ const bot = new Telegraf(process.env.TOKEN);
 
 let userMessages = {};
 let userMessageIds = {};
-let isActiveBot = false;
+let chatStatus = false;
 const LIST_LENGTH = 10;
 
-bot.command('on', async () => (isActiveBot = true));
-bot.command('off', async () => (isActiveBot = false));
+bot.command('on', async () => {
+  const chatId = ctx.chat.id;
+  chatStatus[chatId] = true;
+
+  ctx.deleteMessage();
+});
+bot.command('off', async () => {
+  const chatId = ctx.chat.id;
+  chatStatus[chatId] = false;
+
+  ctx.deleteMessage();
+});
 
 bot.on(message('text'), async (ctx) => {
   try {
+    const chatId = ctx.chat.id;
+
     if (ctx.message.text === '/start') {
       return;
     }
 
-    if (!isActiveBot) {
+    if (!chatStatus[chatId]) {
       return;
     }
 
-    const userId = ctx.from.id + ctx.chat.id || '';
+    const userId = ctx.from.id + chatId || '';
 
     const userName = ctx.from.first_name || ctx.from.username || 'Аноним';
 
