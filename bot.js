@@ -9,13 +9,13 @@ let userMessageIds = {};
 let chatStatus = false;
 const LIST_LENGTH = 10;
 
-bot.command('on', async () => {
+bot.command('on', async (ctx) => {
   const chatId = ctx.chat.id;
   chatStatus[chatId] = true;
 
   ctx.deleteMessage();
 });
-bot.command('off', async () => {
+bot.command('off', async (ctx) => {
   const chatId = ctx.chat.id;
   chatStatus[chatId] = false;
 
