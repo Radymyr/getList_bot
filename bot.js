@@ -7,19 +7,38 @@ const bot = new Telegraf(process.env.TOKEN);
 let userMessages = {};
 let userMessageIds = {};
 let chatStatus = {};
-const LIST_LENGTH = 10;
+let listLength = Infinity;
 
-bot.command('on', async (ctx) => {
+bot.command('start_list', async (ctx) => {
   const chatId = ctx.chat.id;
   chatStatus[chatId] = true;
 
   ctx.deleteMessage();
 });
-bot.command('off', async (ctx) => {
+
+bot.command('stop_list', async (ctx) => {
   const chatId = ctx.chat.id;
   chatStatus[chatId] = false;
 
   ctx.deleteMessage();
+});
+
+bot.command('new_list', async (ctx) => {
+  const chatId = ctx.chat.id;
+  const userId = ctx.from.id;
+  chatStatus[chatId] = true;
+
+  const args = ctx.message?.text.split(' ');
+  if (args.length > 1) {
+    const number = parseInt(args[1]);
+    listLength = !isNaN(number) ? number : Infinity;
+  } else {
+    listLength = Infinity;
+  }
+
+  userMessages[userId + chatId] = [];
+  userMessageIds[userId + chatId] = [];
+  await ctx.deleteMessage();
 });
 
 bot.on(message('text'), async (ctx) => {
@@ -43,7 +62,7 @@ bot.on(message('text'), async (ctx) => {
       userMessageIds[userId] = [];
     }
 
-    if (userMessages[userId].length >= LIST_LENGTH) {
+    if (userMessages[userId].length >= listLength) {
       userMessageIds[userId] = [];
       userMessages[userId] = [];
     }
